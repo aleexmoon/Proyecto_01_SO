@@ -1,5 +1,4 @@
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Gestor de Procesos
@@ -8,7 +7,7 @@ import java.util.Scanner;
  */
 public class GestorDeProcesos {
 
-    static final int QUANTUM = 4;
+    static int QUANTUM = 4;
     static int tiempo = 0;
     static String gant = new String();
 
@@ -19,35 +18,41 @@ public class GestorDeProcesos {
 
 
     public static void main(String[] args) {
-        System.out.println(colaDeProcesos.getLength()); 
+        System.out.println(colaDeProcesos.getLength());   
         
-        inicio();
-        captura_datos();  
+        inicio(); 
+        captura_datos(); 
         if(colaDeProcesos.getLength()!=0){
-            System.out.println("La cola de procesos empieza como: " + colaDeProcesos.listar()); 
+            System.out.println("La cola de procesos empieza como: " + colaDeProcesos.listar());
             int tamano = colaDeProcesos.getLength(); 
-            colaDeProcesos = colaDeProcesos.merge_sort(); 
+            colaDeProcesos = colaDeProcesos.merge_sort();  
             System.out.println("Después de ordenar la lista: " + colaDeProcesos.listar()); 
             tiempo = colaDeProcesos.peak().getTiempoLlegada();  
 
             planificadorMedianoPlazo(); 
             planificadorCortoPlazo();   
 
-            System.out.println("El diagrama de gant final es: " + gant);   
+            System.out.println("El diagrama de gant final es: " + gant);  
 
-            promedios(tamano);
+            promedios(tamano); 
         }else{
             System.out.println("Error. No hay procesos a ordenar");
         }
      }
 
+
     public static void captura_datos(){
         int n;
-
+    
+        Scanner quantum = new Scanner(System.in);
+        System.out.print("Con que Quantum desea trabajar?\n");
+        int Q = quantum.nextInt();    
+        GestorDeProcesos.QUANTUM=Q;
+        
         Scanner entrada = new Scanner(System.in);
         System.out.print("Cuántos procesos desea crear?\n");
-
         n = entrada.nextInt();  
+        
         
         Proceso proceso[] = new Proceso[n];
         int id=1;
@@ -96,33 +101,31 @@ public class GestorDeProcesos {
         {}
         System.out.print("\033[H\033[2J");
     }
- 
     public static void imprimir(){
         System.out.print("|================================================================================|\n");
         System.out.print("|	Simulador Planificador de procesos  Round Robin \t Equipo 2 	 |\n");
         System.out.print("|================================================================================|\n");
     }
 
-
     public static void planificadorMedianoPlazo() {
 
         int tamanoDeLaCola = colaDeProcesos.getLength();    
-        for ( int i = 0; i < tamanoDeLaCola ; i++ ) { 
+        for ( int i = 0; i < tamanoDeLaCola ; i++ ) {  
 
-            if ( colaDeProcesos.peak() != null && colaDeProcesos.peak().getTamano() < memoria.getTamano() ) { 
-
+            if ( colaDeProcesos.peak() != null && colaDeProcesos.peak().getTamano() < memoria.getTamano() ) {
                 if ( colaDeProcesos.peak().getTiempoLlegada() <= tiempo ) {    
                     
-                    System.out.println("Cargando en memoria: " + colaDeProcesos.peak().getNombre()); 
+                    System.out.println("Cargando en memoria: " + colaDeProcesos.peak().getNombre());
                     memoria.cargar(colaDeProcesos.sacar()); 
                     System.out.println("Se actualizo la memoria: " + memoria.getColaDeProcesosListos().listar()); 
                     System.out.println("El tamaño actual de la memoria es: " + memoria.getTamano()); 
                     
-                } else {   
-                    colaDeProcesos.insertar(colaDeProcesos.sacar());   
+                } else { 
+                    colaDeProcesos.insertar(colaDeProcesos.sacar()); 
                     System.out.println("Se actualizo la cola de procesos: " + colaDeProcesos.listar()); 
                 }
-            } else {  
+            
+            } else { //si el 
                 System.out.println("No hay memoria suficiente para el proceso " + colaDeProcesos.peak().getNombre());
                 break;
             }    
@@ -136,28 +139,28 @@ public class GestorDeProcesos {
 
             for (int i = 0; i < memoria.getColaDeProcesosListos().getLength(); i++){ 
                 System.out.println("Tiempo actual: " + tiempo); 
-                System.out.print("Nuestro diagrama de gant seria:"+gant+"\n\n"); 
+                System.out.print("Nuestro diagrama de gant seria:"+gant+"\n\n");  
 
                 Proceso proceso_i = memoria.getColaDeProcesosListos().peak();
-                if (!listaProcesos.contains(proceso_i.getNombre())){   
-                    listaProcesos.add(proceso_i.getNombre());        
-                    proceso_i.setPrimeraVez(tiempo);                    
+                if (!listaProcesos.contains(proceso_i.getNombre())){    
+                    listaProcesos.add(proceso_i.getNombre());         
+                    proceso_i.setPrimeraVez(tiempo);            
                 }
 
                 System.out.println("Proceso a cargar en CPU: " + proceso_i.getNombre());
                     
                 if (proceso_i.get_tiempoLlegada() <= QUANTUM){ 
 
-                    if (proceso_i.get_rafaga() > 0){   
+                    if (proceso_i.get_rafaga() > 0){  
 
-                        bandera = false;
+                        bandera = false;   
 
-                        if (proceso_i.getRafaga() > QUANTUM){
+                        if (proceso_i.getRafaga() > QUANTUM){  
 
                             proceso_i = memoria.sacar();
                             System.out.println("Se actualizo la memoria: " + memoria.getColaDeProcesosListos().listar());
 
-                            tiempo += QUANTUM;
+                            tiempo += QUANTUM;  
                             proceso_i.set_rafaga(proceso_i.get_rafaga() - QUANTUM); 
                             proceso_i.set_tiempoLlegada(proceso_i.get_tiempoLlegada() + QUANTUM);
 
@@ -169,7 +172,7 @@ public class GestorDeProcesos {
 
                             gant += ","+proceso_i.getNombre();
 
-                        } else {
+                        } else {  
 
                             proceso_i.setTiempoCarga(tiempo); 
 
@@ -178,12 +181,15 @@ public class GestorDeProcesos {
 
                             tiempo += proceso_i.get_rafaga();
 
+                     
+                            
                             proceso_i.setTiempoSalida(tiempo);
 
                             System.out.print("\nTiempos "+proceso_i.getNombre()+":");
-                            System.out.print("\nTiempo ejec: "+proceso_i.getTiempoEjecutado());
-                            System.out.print("\nTiempo de carga: "+proceso_i.getTiempoCarga());
-                            System.out.println("\n\tTiempo salida proceso: "+ proceso_i.getTiempoSalida()+ "\n\n");
+                            System.out.print("\n\tTiempo ejec: "+proceso_i.getTiempoEjecutado());
+                            System.out.print("\t\tTiempo de carga: "+proceso_i.getTiempoCarga());
+                            System.out.println("\nTiempo salida proceso: "+ proceso_i.getTiempoSalida()+ "\n");
+                            
                             ProcFin.insertar(proceso_i);
 
                             proceso_i.setTiempoTerminado(tiempo - proceso_i.getTiempoLlegada());
@@ -194,58 +200,7 @@ public class GestorDeProcesos {
                             gant +=","+proceso_i.getNombre();
                         }
                     }
-                } else if (proceso_i.get_tiempoLlegada() > QUANTUM){
-                   
-                    for (int j = 0; j < memoria.getColaDeProcesosListos().getLength(); j++){
-                        
-                        Proceso proceso_j = memoria.getColaDeProcesosListos().peak();
-                        
-                        if (proceso_j.get_tiempoLlegada() < proceso_i.get_tiempoLlegada()){
-
-                            if (proceso_j.get_rafaga() > 0){
-                                bandera = false;
-
-                                if (proceso_j.get_rafaga() > QUANTUM){
-                                
-                                    proceso_j.setTiempoCarga(tiempo);
-                                    proceso_j = memoria.sacar();
-
-                                    System.out.println("Se actualizo la memoria 2: " + memoria.getColaDeProcesosListos().listar());
-
-                                    tiempo += QUANTUM;
-                                    proceso_j.set_rafaga(proceso_j.get_rafaga() - QUANTUM);
-                                    proceso_j.set_tiempoLlegada(proceso_j.get_tiempoLlegada() + QUANTUM);
-
-                                    colaDeProcesos.insertar(proceso_j);
-                                    System.out.println("La cola de procesos es 2: " + colaDeProcesos.listar()); 
-                            
-                                    planificadorMedianoPlazo();
-                                    gant += ","+proceso_j.getNombre();
-
-
-                                    proceso_j.setTiempoEjecutado(QUANTUM);
-                          
-                                } else {
-                                    proceso_j = memoria.sacar();
-                                    tiempo += proceso_j.get_rafaga();
-
-                                    proceso_j.setTiempoSalida(tiempo);
-                                    System.out.print("\nTiempos "+proceso_j.getNombre()+":");
-                                    System.out.print("\nTiempo ejec: "+proceso_j.getTiempoEjecutado());
-                                    System.out.print("\nTiempo de carga: "+proceso_j.getTiempoCarga());
-                                    System.out.println("\nTiempo salida proceso: "+ proceso_j.getTiempoSalida()+ "\n\n");
-                                    ProcFin.insertar(proceso_j);
-
-                                    proceso_j.setTiempoTerminado(tiempo - proceso_j.getTiempoLlegada());
-                                    proceso_j.setTiempoEspera(tiempo - proceso_j.getRafaga() - proceso_j.getTiempoLlegada());
-                                    proceso_j.set_rafaga(0);
-
-                                    planificadorMedianoPlazo();
-                                    gant +=","+proceso_j.getNombre();
-                                }
-                            }
-                        }
-                    }
+                } else {
 
                     if (proceso_i.get_rafaga() > 0){
                         
@@ -254,51 +209,52 @@ public class GestorDeProcesos {
                         if (proceso_i.get_rafaga() > QUANTUM){
 
                             proceso_i = memoria.sacar();
+                            System.out.println("Se actualizo la memoria 2: " + memoria.getColaDeProcesosListos().listar());
 
                             tiempo += QUANTUM;
                             proceso_i.set_rafaga(proceso_i.get_rafaga() - QUANTUM); 
                             proceso_i.set_tiempoLlegada(proceso_i.get_tiempoLlegada() + QUANTUM);
 
                             colaDeProcesos.insertar(proceso_i);
+                            System.out.println("La cola de procesos es: " + colaDeProcesos.listar()); 
                             planificadorMedianoPlazo();
 
-                            gant += ","+proceso_i.getNombre();
-
                             proceso_i.setTiempoEjecutado(QUANTUM);
-
+                            gant += ","+proceso_i.getNombre();
 
                         } else {
                             proceso_i.setTiempoCarga(tiempo);
                             proceso_i = memoria.sacar();
+                            System.out.println("Se actualizo la memoria: " + memoria.getColaDeProcesosListos().listar());
 
                             tiempo += proceso_i.get_rafaga();
 
                             proceso_i.setTiempoSalida(tiempo);
                             System.out.print("\nTiempos "+proceso_i.getNombre()+":");
-                            System.out.print("\tTiempo ejec: "+proceso_i.getTiempoEjecutado());
+                            System.out.print("\n\tTiempo ejec: "+proceso_i.getTiempoEjecutado());
                             System.out.print("\t\tTiempo de carga: "+proceso_i.getTiempoCarga());
                             System.out.println("\nTiempo salida proceso: "+ proceso_i.getTiempoSalida()+ "\n");
-
+                           
                             ProcFin.insertar(proceso_i);
 
                             proceso_i.setTiempoTerminado(tiempo - proceso_i.getTiempoLlegada());
                             proceso_i.setTiempoEspera(tiempo - proceso_i.getRafaga() - proceso_i.getTiempoLlegada());
                             proceso_i.set_rafaga(0);
-                            planificadorMedianoPlazo();
 
+                            planificadorMedianoPlazo();
                             gant +=","+proceso_i.getNombre();
                         }
                     }
                 }
             }
             
-            if(bandera){ 
+            if(bandera){
                 break;
             }
         
         }
     }
-
+    
     public static void promedios(int tamano){
 
         float tresp = 0,
@@ -339,7 +295,9 @@ public class GestorDeProcesos {
         tejec = (tejec/ProcFin.getLength());
         tesp = (tesp/ProcFin.getLength());
         
-        System.out.print("\n El tiempo promedio de espera es: " + tesp + "\n El tiempo de ejecución promedio es: "+tejec+"\n El tiempo respuesta es: "+tresp+"\n");
+        System.out.print("\n El tiempo promedio de espera es: " + tesp + " mseg"
+                         + "\n El tiempo de ejecución promedio es: "+tejec+" mseg"
+                         + "\n El tiempo respuesta es: "+tresp+" mseg\n");
 
     }
 }
