@@ -23,10 +23,10 @@ public class GestorDeProcesos {
         inicio(); 
         captura_datos(); 
         if(colaDeProcesos.getLength()!=0){
-            System.out.println("La cola de procesos empieza como: " + colaDeProcesos.listar());
+            System.out.println("La cola de procesos inicia: " + colaDeProcesos.listar());
             int tamano = colaDeProcesos.getLength(); 
             colaDeProcesos = colaDeProcesos.merge_sort();  
-            System.out.println("Después de ordenar la lista: " + colaDeProcesos.listar()); 
+            // System.out.println("Después de ordenar la lista: " + colaDeProcesos.listar()); 
             tiempo = colaDeProcesos.peak().getTiempoLlegada();  
 
             planificadorMedianoPlazo(); 
@@ -116,8 +116,13 @@ public class GestorDeProcesos {
                 if ( colaDeProcesos.peak().getTiempoLlegada() <= tiempo ) {    
                     
                     System.out.println("Cargando en memoria: " + colaDeProcesos.peak().getNombre());
+                    for (int a = 0 ; a < QUANTUM ; a++) 
+                    {
+                    	System.out.println("La rafaga actual del proceso " + colaDeProcesos.peak().getNombre() + " es " + (colaDeProcesos.peak().getRafaga() - a));
+                    }
                     memoria.cargar(colaDeProcesos.sacar()); 
-                    System.out.println("Se actualizo la memoria: " + memoria.getColaDeProcesosListos().listar()); 
+                    System.out.println("Se actualizo la memoria: " + memoria.getColaDeProcesosListos().listar());
+                    //Va el for
                     System.out.println("El tamaño actual de la memoria es: " + memoria.getTamano()); 
                     
                 } else { 
@@ -162,6 +167,7 @@ public class GestorDeProcesos {
 
                             tiempo += QUANTUM;  
                             proceso_i.set_rafaga(proceso_i.get_rafaga() - QUANTUM); 
+
                             proceso_i.set_tiempoLlegada(proceso_i.get_tiempoLlegada() + QUANTUM);
 
                             colaDeProcesos.insertar(proceso_i);
